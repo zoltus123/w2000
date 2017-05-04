@@ -1,0 +1,6 @@
+Django==1.11
+Jinja2==2.9.6
+MarkupSafe==1.0
+psycopg2==2.7.1
+pytz==2017.2
+xlrd==1.0.0

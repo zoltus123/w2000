@@ -1,0 +1,58 @@
+{% extends "wyniki.html" %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['geochart']});
+      google.charts.setOnLoadCallback(drawRegionsMap);
+
+      function drawRegionsMap() {
+
+        var data = google.visualization.arrayToDataTable([
+          ['Województwo', 'Frekwencja'],
+            {% for woj in wojewodztwa %}
+                [ '{{ woj.nazwa }}', {{ frekwencjaWoj[woj.id] }}]{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ]);
+
+        var wojIndex = [{%for woj in wojewodztwa%}{{woj.id}}{%if not loop.last%},{% endif %}{% endfor %}];
+
+        var options = {
+            region: 'PL',
+            resolution: 'provinces',
+            backgroundColor: '#ffffff',
+            datalessRegionColor: '#ffffff'
+        };
+
+        var chart = new google.visualization.GeoChart(document.getElementById('mapa_div'));
+
+        google.visualization.events.addListener(chart, 'select', function() {
+            var selectionIdx = chart.getSelection()[0].row;
+            window.open("/wyniki/woj/" + wojIndex[selectionIdx]);
+        })
+
+        chart.draw(data, options);
+      }
+    </script>
+{%endblock%}
+{%block navig%}
+{{super()}} Jesteś tu: <a href="{{ url ('index')}}">Polska</a>
+{%endblock%}
+{%block map%}
+<div id="mapa_div"></div>
+{%endblock%}
+{%block links%}
+    <section id="linki">
+        <header>
+            <h2>Województwa:</h2>
+        </header>
+        <ul id="linki_lista">
+            {% for woj in wojewodztwa %}
+                <li>
+                    <a href="{{ url('wojewodztwo', args=[woj.id]) }}"> {{ woj.nazwa }}</a>
+                </li>
+
+            {% endfor %}
+        </ul>
+    </section>
+{%endblock%}

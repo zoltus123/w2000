@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    {%block head%}
+    <meta charset="UTF-8">
+    <title>Wybory Prezydenta Rzeczypospolitej Polskiej 2000</title>
+    <link rel="stylesheet" type="text/css" href='{{ static("style.css") }}'>
+    {%endblock %}
+</head>
+
+<body>
+<header id="naglowek">
+        <h1 id="napis_dluzszy">Wybory Prezydenta Rzeczypospolitej Polskiej 2000</h1>
+</header>
+<nav>
+    {% if request.user.is_authenticated %}
+        <a href="{{ url('logout') }}">Wyloguj się</a>
+    {% else %}
+        <a href="{{ url('login') }}">Zaloguj się</a>
+    {% endif %}
+    <a href="{{ url('szukaj') }}">Wyszukiwarka gmin </a>
+
+    {%block navig%}
+
+    {%endblock%}
+</nav>
+<main>
+    <section id="komunikaty">
+        {% block komunikaty %}
+        {% endblock %}
+    </section>
+    <section id="dane">
+    {%block dane%}
+        <header><h2>Statystyki: </h2></header>
+        <section id="mapa_dane">
+            {%block map%}
+            {%endblock%}
+            <div id="dane_div">
+                <div id="statystyki_div">
+                    <header>
+                        <h4>Zbiorcze statystyki głosowania:</h4>
+                    </header>
+                    <table id="statystyki_tabelka">
+                        {% for stat in statystyki %}
+                            <tr>
+                                <td>
+                                    {{ stat }}
+                                </td>
+                                <td class="statystyki_pole">
+                                    {{ wyniki[stat] }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <div id="frekwencja_div">
+                <header><h4>Frekwencja:</h4></header>
+                    <div class="tloprocentow">
+                        <div class="poziomFrekwencji" style="width: {{ frekwencja }}%"></div>
+                        {{ frekwencja }} %
+
+                </div>
+            </div>
+        </section>
+    {%endblock%}
+    </section>
+    <section id="wyniki">
+    {%block wyniki%}
+
+        <header>
+            <h2>Wyniki wyborów:</h2>
+        </header>
+        <table id="wyniki_tabelka">
+            <tr>
+                <td>Lp</td>
+                <td>Imię i nazwisko</td>
+                <td>Liczba oddanych głosów</td>
+                <td class="wyniki_procenty">Wynik wyborczy (%)</td>
+            </tr>
+            {% for kand in kandydaci %}
+                <tr>
+                    <td>
+                        {{loop.index}}
+                    </td>
+                    <td>
+                        {{kand.imie}} {{kand.nazwisko}}
+                    </td>
+                    <td>
+                        {{ wyniki[kand.id] }}
+                    </td>
+                    <td class="wyniki_procenty">
+                                    <div class="tloprocentow">
+                                        <div class="{{ pozycje[kand.id] }}" style="width:{{ procenty[kand.id]}}%">
+                                        </div>
+                                    </div>
+                                {{ procenty[kand.id] }} %
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    {%endblock%}
+    {%block links%}
+    {%endblock%}
+
+</main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{%extends "wyniki.html"%}
+{%block navig%}
+        {{super()}} Jesteś tu: <a href="{{ url ('index')}}">Polska</a>
+         <a href=" {{ url('wojewodztwo', args=[powiat.wojewodztwo.id])}}">{{ powiat.wojewodztwo.nazwa }}</a>
+        <a href="{{url('powiat', args=[powiat.id])}}">  {{ powiat.nazwa }}</a>
+{%endblock%}
+{%block links%}
+    <section id="linki">
+        <header>
+            <h2>Gminy:</h2>
+        </header>
+        <ul id="linki_lista">
+            {% for g in gminyWPowiecie %}
+                <li>
+                        <a href="{{url('gmina', args=[g['id']])}}">
+                            Gmina {{ g['nazwa'] }}
+                        </a>
+                </li>
+
+            {% endfor %}
+        </ul>
+    </section>
+{%endblock%}

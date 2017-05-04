@@ -1,0 +1,128 @@
+body {
+    margin: 10px 10px auto;
+}
+
+#naglowek, #mapa_dane {
+    display: -webkit-flex;
+    display: flex;
+}
+
+#naglowek {
+    height: 64px;
+    background-image: url('logo_pkw.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+h1, h2 {
+    color: red;
+}
+
+nav {
+    margin: 10px;
+}
+
+#napis_dluzszy {
+    margin: 10px auto;
+}
+
+#komunikaty {
+    color: blue;
+    font-size: x-large;
+}
+
+#mapa_dane, #wyniki_tabelka {
+    margin: 10px auto;
+}
+
+#mapa_dane {
+    width: 60%;
+}
+
+#dane_div, #mapa_div{
+    margin: 0 auto;
+}
+
+.pierwszy {
+    background-color: red;
+}
+
+.drugi {
+    background-color: blue;
+}
+
+.pozostali {
+    background-color: gray;
+}
+
+.procenty {
+    text-align: right;
+}
+
+.tloprocentow {
+    text-align: center;
+    color: forestgreen;
+    background-color: #f8edf0;
+    width: 80%;
+    height: 20px;
+}
+
+.tloprocentow div {
+    height: 20px;
+}
+.poziomFrekwencji {
+    float: left;
+    background-color: forestgreen;
+}
+
+.statystyki_pole {
+    text-align: right;
+}
+
+#wyniki_tabelka {
+    width: 100%;
+}
+
+#wyniki_tabelka tr:nth-child(2n+3) {
+    background-color: lightgray;
+}
+
+#wyniki_tabelka tr:hover {
+    background-color: orange;
+}
+
+a {
+    color:red;
+    text-decoration: none;
+}
+
+a:hover {
+    background-color: orange;
+}
+
+@media all and (max-width: 1100px) {
+    #napis_dluzszy {
+        display: none;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        visibility: collapse;
+    }
+
+}
+
+@media all and (max-width: 750px) {
+    td.wyniki_procenty {
+        display:none;
+        width:0;
+        height:0;
+        opacity:0;
+        visibility: collapse;
+    }
+
+    #mapa_dane {
+        width: auto;
+        flex-direction: column;
+    }
+
+}

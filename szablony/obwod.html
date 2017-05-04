@@ -1,0 +1,46 @@
+{%extends "wyniki.html"%}
+{%block navig%}
+        {{super()}} Jesteś tu: <a href="{{ url ('index')}}">Polska</a>
+         <a href=" {{ url('wojewodztwo', args=[obwod.gmina.powiat.wojewodztwo.id])}}">
+             {{ obwod.gmina.powiat.wojewodztwo.nazwa }}</a>
+        <a href="{{url('powiat', args=[obwod.gmina.powiat.id])}}">  {{ obwod.gmina.powiat.nazwa }}</a>
+        <a href="{{url('gmina', args=[obwod.gmina.id])}}">
+            Gmina {{ obwod.gmina.nazwa }}</a>
+        <a href="{{url('obwod', args=[obwod.id])}}">
+            Obwód nr {{ obwod.numer }}</a>
+{%endblock%}
+{%block wyniki%}
+        <header>
+            <h2>Wyniki wyborów:</h2>
+        </header>
+        <table id="wyniki_tabelka">
+            <tr>
+                <td>Lp</td>
+                <td>Imię i nazwisko</td>
+                <td>Liczba oddanych głosów</td>
+                <td class="wyniki_procenty">Wynik wyborczy (%)</td>
+            </tr>
+            {% for kand in kandydaci %}
+                <tr>
+                    <td>
+                        {{loop.index}}
+                    </td>
+                    <td>
+                        {{kand['imie']}} {{kand['nazwisko']}}
+                    </td>
+                    <td>
+                        {{ wyniki[kand['id']] }}
+                    </td>
+                    <td class="wyniki_procenty">
+                                    <div class="tloprocentow">
+                                        <div class="{{ pozycje[kand['id']] }}" style="width:
+                                                {{ procenty[kand['id']] }}%">
+                                        </div>
+                                    </div>
+                                {{ procenty[kand['id']] }} %
+                    </td>
+                    <td><a href="{{ url('edytuj', args=[obwod.id, kand['id']]) }}">Edycja</td>
+                </tr>
+            {% endfor %}
+        </table>
+{%endblock%}

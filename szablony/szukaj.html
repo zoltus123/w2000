@@ -1,0 +1,27 @@
+{%extends "wyniki.html"%}
+{%block navig%}
+        {{super()}} <a href="{{ url ('index')}}">Powrót do strony głównej</a>
+{%endblock%}
+{%block dane%}
+    <header><h2>Wyszukaj gminę:</h2></header>
+
+    <form action="#" method="post">
+        {{ csrf_input }}
+        {{ form }}
+    <input type="submit" value="Szukaj" >
+    </form>
+{%endblock%}
+{%block wyniki%}
+<header><h2>Wyniki wyszukiwania: </h2><h2 style="color:blue">{{ komunikat }}</h2></header>
+<ul>
+    {%for g in gminy%}
+    <li>
+        <a href="{{url('gmina', args=[g.id])}}">Gmina {{g.nazwa}}
+            (pow. {{g.powiat.nazwa}})</a>
+    </li>
+    {%endfor%}
+</ul>
+{%endblock%}
+
+
+

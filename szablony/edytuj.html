@@ -1,0 +1,66 @@
+{%extends "wyniki.html"%}
+{%block navig%}
+        {{super()}} <a href="{{ url ('index')}}">Powrót do strony głównej</a>
+{%endblock%}
+{% block komunikaty %}
+    {{ komunikat }}
+{% endblock %}
+{%block dane%}
+    <header>
+        <h2>Wpisz wynik:</h2>
+    </header>
+        <table>
+            <tr>
+                <td>
+                    Kandydat:
+                </td>
+                <td>
+                    {{ kand.imie }} {{ kand.nazwisko }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Województwo:
+                </td>
+                <td>
+                    <a href="{{ url('wojewodztwo', args=[obwod.gmina.powiat.wojewodztwo.id]) }}">
+                        {{ obwod.gmina.powiat.wojewodztwo.nazwa }}
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Powiat:
+                </td>
+                <td>
+                    <a href="{{ url('powiat', args=[obwod.gmina.powiat.id]) }}">{{ obwod.gmina.powiat.nazwa }}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Gmina:
+                </td>
+                <td>
+                    <a href="{{ url('gmina', args=[obwod.gmina.id]) }}"> {{ obwod.gmina.nazwa }}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Obwód nr:
+                </td>
+                <td>
+                    <a href="{{ url('obwod', args=[obwod.id]) }}">{{ obwod.numer }}</a>
+                </td>
+            </tr>
+        </table>
+
+    <form method="post" action="#">
+                 <input name="csrfmiddlewaretoken" value="{{csrf_token}}" type="hidden">
+                 {{ form }}
+
+            <input type="submit" name="submit" value="Zapisz" >
+
+    </form>
+{%endblock%}
+{% block wyniki %}
+{% endblock %}
