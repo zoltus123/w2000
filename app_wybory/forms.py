@@ -9,4 +9,4 @@ class loginForm(forms.Form):
     password = forms.CharField(label='Hasło:', widget=forms.PasswordInput)
 
 class wynikForm(forms.Form):
-    wynik = forms.IntegerField(label='Wynik:')
+    wynik = forms.IntegerField(label='Wynik:', min_value=0)

@@ -319,22 +319,30 @@ def logoutView(request):
 @login_required(login_url='/login/')
 @transaction.atomic
 def edytujView(request, obw_id, kand_id):
+
     data = {}
 
-    data['obwod'] = get_object_or_404(Obwod, id=obw_id)
+    #Sprawdzamy, czy obwód istnieje
+    get_object_or_404(Obwod, id=obw_id)
+    # Blokujemy obwód!
+    data['obwod'] = Obwod.objects.select_for_update().get(id=obw_id)
+
     data['kand'] = get_object_or_404(Kandydat, id=kand_id)
     data['form'] = wynikForm()
     data['komunikat'] = ""
 
     if request.method == 'POST':
         form = wynikForm(request.POST)
+        #Sprawdzamy, czy wynik jest poprawny (wynikForm ma pole z ustawionym min_value=0)
         if form.is_valid():
             wynik = form.cleaned_data['wynik']
-            if wynik < 0:
-                data['komunikat'] = "Podaj dodatni wynik"
-                return render(request, 'edytuj.html', data)
+
+            #Tworzymy wynik kandydata, jeśli go nie ma
             wynikKand, created = WynikKandydata.objects.get_or_create(obwod=data['obwod'], kandydat=data['kand'],
                                                         defaults={'wynik': 0})
+
+
+            wynikiObwodu = Obwod.objects.select_for_update().filter(id=data['obwod'].id)
 
             roznica = wynik - wynikKand.wynik
 
@@ -345,7 +353,7 @@ def edytujView(request, obw_id, kand_id):
                                                         statystyka__nazwa='Wydane karty', defaults={'wynik': 0})
 
             if glosyOddane.wynik + roznica > wydaneKarty.wynik:
-                data['komunikat'] = "Suma głosów oddanych nie może przekraczać liczby wydanych kart"
+                data['komunikat'] += "Suma głosów oddanych nie może przekraczać liczby wydanych kart"
                 return render(request, 'edytuj.html', data)
 
             glosyWazne, created = WynikStatystyki.objects.get_or_create(obwod=data['obwod'],
@@ -362,9 +370,9 @@ def edytujView(request, obw_id, kand_id):
             glosyOddane.wynik += roznica
             glosyOddane.save()
 
-            data['komunikat'] = "Zapisano liczbę głosów: " + str(wynik)
+            data['komunikat'] += "Zapisano liczbę głosów: " + str(wynik)
             return render(request, 'edytuj.html', data)
-        data['komunikat'] = "Dane są niepoprawne"
+        data['komunikat'] += "Dane są niepoprawne"
     return render(request, 'edytuj.html', data)
 
 
