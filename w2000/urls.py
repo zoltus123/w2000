@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
-from app_wybory.views import index, wojNazView, wojewodztwoView, powiatView, gminaView, obwodView
+
+import app_rest
+from app_wybory.views import index, wojewodztwoView, powiatView, gminaView, obwodView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -25,7 +27,6 @@ WOJEWODZTWA = "Dolnośląskie|Kujawsko-Pomorskie|Lubelskie|Lubuskie|Łódzkie|Ma
 
 urlpatterns = [
     url(r'^$', index, name='index'),
-    url(r'^wyniki/woj/(?P<woj>' + WOJEWODZTWA + ')/$', wojNazView),
     url(r'^wyniki/woj/(?P<woj_id>[0-9]+)/$', wojewodztwoView, name='wojewodztwo'),
     url(r'^wyniki/pow/(?P<pow_id>[0-9]+)/$', powiatView, name='powiat'),
     url(r'^wyniki/gmina/(?P<gmi_id>[0-9]+)/$', gminaView, name='gmina'),
@@ -36,5 +37,5 @@ urlpatterns = [
     url(r'^logout/', logoutView, name='logout'),
     url(r'^szukaj/', szukajView),
     url(r'^edytuj/(?P<obw_id>[0-9]+)/(?P<kand_id>[0-9]+)', edytujView, name='edytuj'),
-    url(r'^rest/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^rest/', include('app_rest.urls'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

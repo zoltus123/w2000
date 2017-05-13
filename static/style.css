@@ -14,8 +14,13 @@ body {
     background-size: contain;
 }
 
-h1, h2 {
+h1 {
     color: red;
+}
+
+main > section > header {
+    color: red;
+    font-size: x-large;
 }
 
 nav {
@@ -104,6 +109,7 @@ a {
 a:hover {
     background-color: orange;
 }
+
 
 @media all and (max-width: 1100px) {
     #napis_dluzszy {

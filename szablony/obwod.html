@@ -1,11 +1,11 @@
 {%extends "wyniki.html"%}
 {%block navig%}
         {{super()}} Jesteś tu: <a href="{{ url ('index')}}">Polska</a>
-         <a href=" {{ url('wojewodztwo', args=[obwod.gmina.powiat.wojewodztwo.id])}}">
-             {{ obwod.gmina.powiat.wojewodztwo.nazwa }}</a>
-        <a href="{{url('powiat', args=[obwod.gmina.powiat.id])}}">  {{ obwod.gmina.powiat.nazwa }}</a>
-        <a href="{{url('gmina', args=[obwod.gmina.id])}}">
-            Gmina {{ obwod.gmina.nazwa }}</a>
+         <a href=" {{ url('wojewodztwo', args=[wojewodztwo.id])}}">
+             {{ wojewodztwo.nazwa }}</a>
+        <a href="{{url('powiat', args=[powiat.id])}}">  {{ powiat.nazwa }}</a>
+        <a href="{{url('gmina', args=[gmina.id])}}">
+            Gmina {{ gmina.nazwa }}</a>
         <a href="{{url('obwod', args=[obwod.id])}}">
             Obwód nr {{ obwod.numer }}</a>
 {%endblock%}

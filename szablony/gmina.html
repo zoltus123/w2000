@@ -1,15 +1,15 @@
 {%extends "wyniki.html"%}
 {%block navig%}
         {{super()}} Jesteś tu: <a href="{{ url ('index')}}">Polska</a>
-        <a href=" {{ url('wojewodztwo', args=[gmina.powiat.wojewodztwo.id])}}">{{ gmina.powiat.wojewodztwo.nazwa }}</a>
-        <a href="{{url('powiat', args=[gmina.powiat.id])}}">  {{ gmina.powiat.nazwa }}</a>
+        <a href=" {{ url('wojewodztwo', args=[wojewodztwo.id])}}">{{ wojewodztwo.nazwa }}</a>
+        <a href="{{url('powiat', args=[powiat.id])}}">  {{ powiat.nazwa }}</a>
         <a href="{{url('gmina', args=[gmina.id])}}">
             Gmina {{ gmina.nazwa }}</a>
 {%endblock%}
 {%block links%}
     <section id="linki">
         <header>
-            <h2>Obwody:</h2>
+            Obwody:
         </header>
         <table id="linki_tabelka">
             {% for o in adresyObwodow %}
