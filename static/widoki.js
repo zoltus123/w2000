@@ -11,8 +11,7 @@ function widokWynikow() {
     );
     $('#wyniki').empty().append(
         "<header>Wyniki wyborów:</header>" +
-        "<table id='wyniki_tabelka'><tr><td>Lp</td><td>Imię i nazwisko</td><td>Liczba oddanych głosów</td>" +
-        "<td class='wyniki_procenty'>Wynik wyborczy (%)</td></tr>"
+        "<table id='wyniki_tabelka'>"
     );
     $('#linki').empty()
 }
@@ -83,6 +82,10 @@ function wypelnijFrekwencje(frekwencja) {
 function wypelnijWyniki(kandydaci, wyniki, pozycje, procenty) {
     var wynikiTabelka = $('#wyniki_tabelka');
     wynikiTabelka.empty();
+    wynikiTabelka.append(
+      "<tr><td>Lp</td><td>Imię i nazwisko</td><td>Liczba oddanych głosów</td>" +
+        "<td class='wyniki_procenty'>Wynik wyborczy (%)</td></tr>"
+    );
     i = 1;
     for (var kand in kandydaci) {
         wynikiTabelka.append(
