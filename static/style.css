@@ -19,7 +19,12 @@ h1, h2 {
 }
 
 nav {
+    display: -webkit-flex;
+    display: flex;
+    justify-content: space-between;
     margin: 10px;
+    border-bottom: 1px solid;
+    border-color: red;
 }
 
 #napis_dluzszy {

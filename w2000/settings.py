@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_wybory.apps.AppWyboryConfig',
     'app_regiony.apps.AppRegionyConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [

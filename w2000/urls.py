@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from app_wybory.views import index, wojNazView, wojewodztwoView, powiatView, gminaView, obwodView
 from django.conf import settings
@@ -35,5 +35,6 @@ urlpatterns = [
     url(r'^login/', loginView, name='login'),
     url(r'^logout/', logoutView, name='logout'),
     url(r'^szukaj/', szukajView),
-    url(r'^edytuj/(?P<obw_id>[0-9]+)/(?P<kand_id>[0-9]+)', edytujView, name='edytuj')
-]
+    url(r'^edytuj/(?P<obw_id>[0-9]+)/(?P<kand_id>[0-9]+)', edytujView, name='edytuj'),
+    url(r'^rest/', include('rest_framework.urls', namespace='rest_framework'))
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

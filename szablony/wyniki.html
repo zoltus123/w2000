@@ -13,16 +13,21 @@
         <h1 id="napis_dluzszy">Wybory Prezydenta Rzeczypospolitej Polskiej 2000</h1>
 </header>
 <nav>
-    {% if request.user.is_authenticated %}
+    <div id="nav_szukaj">
+            <a href="{{ url('szukaj') }}">Wyszukiwarka gmin </a>
+    </div>
+
+    <div id="nav_miejsce">
+       {%block navig%}
+       {%endblock%}
+    </div>
+    <div id="nav_login">
+        {% if request.user.is_authenticated %}
         <a href="{{ url('logout') }}">Wyloguj się</a>
-    {% else %}
+        {% else %}
         <a href="{{ url('login') }}">Zaloguj się</a>
-    {% endif %}
-    <a href="{{ url('szukaj') }}">Wyszukiwarka gmin </a>
-
-    {%block navig%}
-
-    {%endblock%}
+        {% endif %}
+    </div>
 </nav>
 <main>
     <section id="komunikaty">
@@ -59,7 +64,7 @@
                     <div class="tloprocentow">
                         <div class="poziomFrekwencji" style="width: {{ frekwencja }}%"></div>
                         {{ frekwencja }} %
-
+                    </div>
                 </div>
             </div>
         </section>
@@ -99,8 +104,8 @@
                 </tr>
             {% endfor %}
         </table>
-
     {%endblock%}
+    </section>
     {%block links%}
     {%endblock%}
 
