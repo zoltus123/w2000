@@ -24,4 +24,5 @@ urlpatterns = [
     url(r'^pow/(?P<pow_id>[0-9]+)/$', restPowView, name='restPow'),
     url(r'^gmina/(?P<gmi_id>[0-9]+)/$', restGmiView, name='restGmi'),
     url(r'^obwod/(?P<obw_id>[0-9]+)/$', restObwView, name='restObw'),
+    url(r'^szukaj/', restSzukajView, name='restSzukaj'),
 ]

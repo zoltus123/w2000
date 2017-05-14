@@ -293,6 +293,12 @@ def obwodView(request,  obw_id):
     return render(request, "obwod.html", podajDaneObwodu(obwod))
 
 
+def znajdzGminy(wzorzec):
+    data = {}
+    data['gminy'] = [{'id': g.id, 'nazwa': g.nazwa, 'powiat': g.powiat.nazwa} for g in Gmina.objects.filter(nazwa__contains=wzorzec)]
+    data['komunikat'] = "(znaleziono " + str(len(data['gminy'])) + ")"
+    return data
+
 def szukajView(request):
     data = {}
     data['form'] = GminyForm()
@@ -301,9 +307,7 @@ def szukajView(request):
     if request.method == 'POST':
         form = GminyForm(request.POST)
         if form.is_valid():
-            wzorzec = form.cleaned_data['wzorzec']
-            data['gminy'] = Gmina.objects.filter(nazwa__contains=wzorzec)
-            data['komunikat'] = "(znaleziono " + str(len(data['gminy'])) + ")"
+            data.update(znajdzGminy(form.cleaned_data['wzorzec']))
     return render(request, 'szukaj.html', data)
 
 

@@ -2,20 +2,57 @@
  * Created by miki on 13.05.17.
  */
 function widokWynikow() {
-    $('#komunikaty').empty();
-    $('#dane').empty().append(
+    wyczyscStrone();
+    $('#dane').append(
         "<header>Statystyki: </header>" +
         "<section id='mapa_dane'><div id='mapa_div'></div><div id='dane_div'>" +
         "<div id='statystyki_div'><header><h4>Zbiorcze statystyki głosowania:</h4></header>" +
         "<table id='statystyki_tabelka'></table></div><div id='frekwencja_div'></div></div></section>"
     );
-    $('#wyniki').empty().append(
+    $('#wyniki').append(
         "<header>Wyniki wyborów:</header>" +
         "<table id='wyniki_tabelka'>"
     );
-    $('#linki').empty()
 }
 
+
+function widokWyszukiwania() {
+    wyczyscStrone();
+    $('#wyniki').append(
+        "<header>Wyniki wyszukiwania: </header><ul id='lista_gmin'></ul>"
+    );
+}
+
+
+function wyszukajGminy() {
+    var wzorzec = $('#pole_wyszukiwarki').val();
+    if(wzorzec && wzorzec.length > 0) {
+        widokWyszukiwania();
+        $.getJSON("/rest/szukaj?wzorzec=" + wzorzec, function (data) {
+            $('#wyniki > header').append(data.komunikat);
+
+            for (var gmi in data.gminy) {
+                $('#lista_gmin').append(
+                    "<li><a href='#' onclick='widokGminy(" + data.gminy[gmi].id + ")'>Gmina " + data.gminy[gmi].nazwa +
+                    " (pow. " + data.gminy[gmi].powiat + ")</a></li>"
+                );
+            }
+        });
+    }
+}
+
+
+function nawigujPowrot() {
+    $('#nav_miejsce').html("<a href='#' onclick='widokKraju()'>Powrót do strony głównej</a>")
+}
+
+function wyczyscStrone() {
+    nawigujPowrot();
+    $('#komunikaty').empty();
+    $('#dane').empty();
+    $('#wyniki').empty();
+    $('#linki').empty();
+}
 
 function nawigujKraj() {
     $('#nav_miejsce').html("Jesteś tu: <a href='#' onclick='widokKraju()'>Polska </a>");
@@ -44,6 +81,8 @@ function nawigujObw(obw, gmi, pow, woj) {
     nawigujGmi(gmi, pow, woj);
     $('#nav_miejsce').append("<a href='#' onclick='widokObwodu(" + obw.id + ")'>Obwód nr " + obw.numer + " </a>");
 }
+
+
 function wypelnijStatystyki(statystyki, wyniki) {
     var statystykiTabelka = $("#statystyki_tabelka");
 
@@ -283,7 +322,6 @@ function wypelnijWojewodztwa(wojewodztwa) {
 
 function widokKraju() {
     widokWynikow();
-
     $.getJSON("/rest/index", function ( data ) {
         nawigujKraj();
         wypelnijStatystyki(data.statystyki, data.wyniki);

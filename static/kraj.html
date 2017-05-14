@@ -15,7 +15,7 @@
 </header>
 <nav>
     <div id="nav_szukaj">
-        <a href="szukaj.html">Wyszukiwarka gmin </a>
+        <label for="pole_wyszukiwarki">Wyszukaj gminę:</label><input type="text" id="pole_wyszukiwarki">
     </div>
 
     <div id="nav_miejsce">
@@ -38,6 +38,7 @@
 </html>
 
 <script type="text/javascript">
+    $('#pole_wyszukiwarki').bind('input', wyszukajGminy);
     widokKraju();
 </script>
 
