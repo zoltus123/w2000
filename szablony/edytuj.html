@@ -15,7 +15,7 @@
                     Kandydat:
                 </td>
                 <td>
-                    {{ kand.imie }} {{ kand.nazwisko }}
+                    {{ kandydat.imie }} {{ kandydat.nazwisko }}
                 </td>
             </tr>
             <tr>
@@ -23,8 +23,8 @@
                     Województwo:
                 </td>
                 <td>
-                    <a href="{{ url('wojewodztwo', args=[obwod.gmina.powiat.wojewodztwo.id]) }}">
-                        {{ obwod.gmina.powiat.wojewodztwo.nazwa }}
+                    <a href="{{ url('wojewodztwo', args=[wojewodztwo.id]) }}">
+                        {{ wojewodztwo.nazwa }}
                     </a>
                 </td>
             </tr>
@@ -33,7 +33,7 @@
                     Powiat:
                 </td>
                 <td>
-                    <a href="{{ url('powiat', args=[obwod.gmina.powiat.id]) }}">{{ obwod.gmina.powiat.nazwa }}</a>
+                    <a href="{{ url('powiat', args=[powiat.id]) }}">{{ powiat.nazwa }}</a>
                 </td>
             </tr>
             <tr>
@@ -41,7 +41,7 @@
                     Gmina:
                 </td>
                 <td>
-                    <a href="{{ url('gmina', args=[obwod.gmina.id]) }}"> {{ obwod.gmina.nazwa }}</a>
+                    <a href="{{ url('gmina', args=[gmina.id]) }}"> {{ gmina.nazwa }}</a>
                 </td>
             </tr>
             <tr>
@@ -55,7 +55,7 @@
         </table>
 
     <form method="post" action="#">
-                 <input name="csrfmiddlewaretoken" value="{{csrf_token}}" type="hidden">
+            <input name="csrfmiddlewaretoken" value="{{csrf_token}}" type="hidden">
                  {{ form }}
 
             <input type="submit" name="submit" value="Zapisz" >

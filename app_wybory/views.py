@@ -338,19 +338,60 @@ def logoutView(request):
     logout(request)
     return HttpResponseRedirect("/")
 
+@transaction.atomic
+def edytujWynik(obw: Obwod, kand: Kandydat, wynik: int):
+    #Sprawdzamy, czy wynik jest nieujemny
+    if(wynik < 0):
+        return 'wynik musi być nieujemny'
+    # Blokujemy obwód!
+    Obwod.objects.select_for_update().get(id=obw.id)
+    # Tworzymy wynik kandydata, jeśli go nie ma
+    wynikKand, created = WynikKandydata.objects.get_or_create(obwod=obw, kandydat=kand, defaults={'wynik': 0})
+    roznica = wynik - wynikKand.wynik
+    glosyOddane, created = WynikStatystyki.objects.get_or_create(obwod=obw, statystyka__nazwa='Głosy oddane',
+                                                                 defaults={'wynik': 0})
+    wydaneKarty, created = WynikStatystyki.objects.get_or_create(obwod=obw, statystyka__nazwa='Wydane karty',
+                                                                 defaults={'wynik': 0})
+
+    if glosyOddane.wynik + roznica > wydaneKarty.wynik:
+        return "Suma głosów oddanych nie może przekraczać liczby wydanych kart"
+
+    glosyWazne, created = WynikStatystyki.objects.get_or_create(obwod=obw, statystyka__nazwa='Głosy ważne', defaults={
+            'wynik': 0
+        })
+
+    wynikKand.wynik += roznica
+    wynikKand.save()
+
+    glosyWazne.wynik += roznica
+    glosyWazne.save()
+
+    glosyOddane.wynik += roznica
+    glosyOddane.save()
+
+    return ("Zapisano liczbę głosów: " + str(wynik))
+
+
+def dajEdycjaDane(obwod : Obwod, kandydat : Kandydat):
+    data = {}
+    data['obwod'] = {'id': obwod.id, 'numer': obwod.numer}
+    data['gmina'] = {'id': obwod.gmina.id, 'nazwa': obwod.gmina.nazwa}
+    data['powiat'] = {'id': obwod.gmina.powiat.id, 'nazwa': obwod.gmina.powiat.nazwa}
+    data['wojewodztwo'] = {'id': obwod.gmina.powiat.wojewodztwo.id, 'nazwa': obwod.gmina.powiat.wojewodztwo.nazwa}
+    data['kandydat'] = {'imie': kandydat.imie, 'nazwisko': kandydat.nazwisko}
+    return data
+
 
 @login_required(login_url='/login/')
-@transaction.atomic
 def edytujView(request, obw_id, kand_id):
-
     data = {}
 
     #Sprawdzamy, czy obwód istnieje
-    get_object_or_404(Obwod, id=obw_id)
-    # Blokujemy obwód!
-    data['obwod'] = Obwod.objects.select_for_update().get(id=obw_id)
+    obwod = get_object_or_404(Obwod, id=obw_id)
+    # Sprawdzamy, czy kandydat istnieje
+    kandydat = get_object_or_404(Kandydat, id=kand_id)
 
-    data['kand'] = get_object_or_404(Kandydat, id=kand_id)
+    data.update(dajEdycjaDane(obwod, kandydat))
     data['form'] = wynikForm()
     data['komunikat'] = ""
 
@@ -358,42 +399,7 @@ def edytujView(request, obw_id, kand_id):
         form = wynikForm(request.POST)
         #Sprawdzamy, czy wynik jest poprawny (wynikForm ma pole z ustawionym min_value=0)
         if form.is_valid():
-            wynik = form.cleaned_data['wynik']
-
-            #Tworzymy wynik kandydata, jeśli go nie ma
-            wynikKand, created = WynikKandydata.objects.get_or_create(obwod=data['obwod'], kandydat=data['kand'],
-                                                        defaults={'wynik': 0})
-
-
-            wynikiObwodu = Obwod.objects.select_for_update().filter(id=data['obwod'].id)
-
-            roznica = wynik - wynikKand.wynik
-
-            glosyOddane, created = WynikStatystyki.objects.get_or_create(obwod=data['obwod'],
-                                                        statystyka__nazwa='Głosy oddane', defaults={'wynik': 0})
-
-            wydaneKarty, created = WynikStatystyki.objects.get_or_create(obwod=data['obwod'],
-                                                        statystyka__nazwa='Wydane karty', defaults={'wynik': 0})
-
-            if glosyOddane.wynik + roznica > wydaneKarty.wynik:
-                data['komunikat'] += "Suma głosów oddanych nie może przekraczać liczby wydanych kart"
-                return render(request, 'edytuj.html', data)
-
-            glosyWazne, created = WynikStatystyki.objects.get_or_create(obwod=data['obwod'],
-                                                                statystyka__nazwa='Głosy ważne', defaults={
-                    'wynik': 0
-                })
-
-            wynikKand.wynik += roznica
-            wynikKand.save()
-
-            glosyWazne.wynik += roznica
-            glosyWazne.save()
-
-            glosyOddane.wynik += roznica
-            glosyOddane.save()
-
-            data['komunikat'] += "Zapisano liczbę głosów: " + str(wynik)
+            data['komunikat'] = edytujWynik(obwod, kandydat, form.cleaned_data['wynik'])
             return render(request, 'edytuj.html', data)
         data['komunikat'] += "Dane są niepoprawne"
     return render(request, 'edytuj.html', data)

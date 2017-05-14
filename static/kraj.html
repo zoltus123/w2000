@@ -22,6 +22,21 @@
     </div>
     <!-- TODO LOGOWANIE JS -->
     <div id="nav_login">
+        <div id="logowanie_przycisk" >
+            <a href="#" onclick="pokazFormularzLogowania()">Zaloguj się</a>
+        </div>
+        <div id="pod_logowaniem">
+            <div id="div_formularz_logowania">
+                <form onsubmit="zaloguj()">
+                    <label for='username'>Login:</label>
+                    <input id='username' type='text' required>
+                    <label for='password'>Hasło:</label>
+                    <input id='password' type="password" required>
+                    <input type="submit" value="Zaloguj">
+                </form>
+                <button onclick="ukryjFormularzLogowania()">Zamknij</button>
+            </div>
+        </div>
     </div>
 </nav>
 <main>

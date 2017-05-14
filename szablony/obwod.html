@@ -19,6 +19,7 @@
                 <td>Imię i nazwisko</td>
                 <td>Liczba oddanych głosów</td>
                 <td class="wyniki_procenty">Wynik wyborczy (%)</td>
+                <td></td>
             </tr>
             {% for kand in kandydaci %}
                 <tr>
@@ -39,7 +40,7 @@
                                     </div>
                                 {{ procenty[kand['id']] }} %
                     </td>
-                    <td><a href="{{ url('edytuj', args=[obwod.id, kand['id']]) }}">Edycja</td>
+                    <td><a href="{{ url('edytuj', args=[obwod.id, kand['id']]) }}">Edytuj</a></td>
                 </tr>
             {% endfor %}
         </table>
