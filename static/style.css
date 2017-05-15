@@ -52,6 +52,12 @@ nav {
     height: 120px;
 }
 
+#x {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
 #napis_dluzszy {
     margin: 10px auto;
 }

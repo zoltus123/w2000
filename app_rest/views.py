@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 from django.http import JsonResponse, Http404
 from django.shortcuts import  get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from app_regiony.models import Wojewodztwo, Powiat, Gmina
 from app_wybory.models import Obwod, Kandydat
@@ -46,24 +47,16 @@ def restSzukajView(request):
     except KeyError:
         raise Http404('Brak wzorca do wyszukania')
 
-
+@csrf_exempt
 def restLoginView(request):
-    if request.user.is_authenticated:
-        return JsonResponse({'komunikat' : 'zalogowano'})
     if request.method == 'POST':
         try:
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         except KeyError:
-            return JsonResponse({'komunikat' : 'niezalogowano'})
+            return JsonResponse({'komunikat' : 'zle'})
         if user is not None:
-            login(request, user)
-            return JsonResponse({'komunikat' : 'zalogowano'})
-    return JsonResponse({'komunikat' : 'niezalogowano'})
-
-
-def restLogoutView(request):
-    logout(request)
-    return JsonResponse({'komunikat' : 'wylogowano'})
+            return JsonResponse({'komunikat' : 'ok'})
+    return JsonResponse({'komunikat' : 'zle'})
 
 
 def restEdycjaDaneView(request):
@@ -74,14 +67,19 @@ def restEdycjaDaneView(request):
     except KeyError:
         raise Http404('Podaj id obwodu i kandydata')
 
-
+@csrf_exempt
 def restEdytujView(request):
     if request.method == 'POST':
         try:
             obwod = get_object_or_404(Obwod, id=request.POST['obw_id'])
             kand = get_object_or_404(Kandydat, id=request.POST['kand_id'])
+            username = request.POST['username']
+            password = request.POST['password']
             wynik = int(request.POST['wynik'])
         except KeyError:
             return JsonResponse({'komunikat' : 'podaj dane'})
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            return JsonResponse({'komunikat': 'zaloguj się'})
         return JsonResponse({'komunikat' : edytujWynik(obwod, kand, wynik)})
     return JsonResponse({'komunikat' : 'podaj dane'})

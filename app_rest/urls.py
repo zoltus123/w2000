@@ -26,7 +26,6 @@ urlpatterns = [
     url(r'^obwod/(?P<obw_id>[0-9]+)/$', restObwView, name='restObw'),
     url(r'^szukaj/$', restSzukajView, name='restSzukaj'),
     url(r'^login/$', restLoginView, name='restLogin'),
-    url(r'^logout/$', restLogoutView, name='restLogout'),
     url(r'^edycjaDane/$', restEdycjaDaneView, name='restEdycjaDane'),
     url(r'^edytuj/$', restEdytujView, name='restEdytuj'),
 ]

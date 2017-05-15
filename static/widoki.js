@@ -2,12 +2,40 @@
  * Created by miki on 13.05.17.
  */
 function pokazFormularzLogowania() {
-    $('#formularz_logowania').show();
+    $('#div_formularz_logowania').show();
 }
 
+
 function ukryjFormularzLogowania() {
-    $('#formularz_logowania').hide();
+    $('#div_formularz_logowania').hide();
 }
+
+
+function widokZaloguj() {
+    $('#logowanie_przycisk').html("<a href='#' onclick='pokazFormularzLogowania()'>Zaloguj się</a>");
+    $('#div_formularz_logowania').hide();
+}
+
+
+function widokWyloguj() {
+    $('#logowanie_przycisk').html("<a href='#' onclick='wyloguj()'>Wyloguj się</a>");
+    $('#div_formularz_logowania').hide();
+}
+
+
+function uwierzytelnij(username, password) {
+    $.post("/rest/login/", {'username': username, 'password': password}, function (data) {
+        if (data.komunikat === 'ok') {
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
+            widokWyloguj();
+        } else {
+            $('#komunikaty').text(data.komunikat);
+            widokZaloguj();
+        }
+    });
+}
+
 
 function zaloguj() {
     var username = $('#username').val();
@@ -19,18 +47,16 @@ function zaloguj() {
         return alert("Podaj hasło!");
     }
 
-    $.post("/rest/login/", {'username': username, 'password': password}, function (data) {
-        if(data.komunikat === 'zalogowano') {
-            localStorage.setItem('username', username);
-            localStorage.setItem('password', password);
-        }
-    });
+    document.getElementById('formularz_logowania').reset();
+    uwierzytelnij(username, password);
 }
 
-function wyloguj() {
-    $.post("/rest/logout/", function (data) {
 
-    });
+function wyloguj() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('password');
+    widokZaloguj();
+    widokKraju();
 }
 
 function widokWynikow() {
@@ -54,6 +80,21 @@ function widokWyszukiwania() {
         "<header>Wyniki wyszukiwania: </header><ul id='lista_gmin'></ul>"
     );
 }
+
+
+function edytujWynik(obw_id, kand_id) {
+    if(localStorage.getItem('username') === null || localStorage.getItem('password') === null) {
+        return alert('Zaloguj się');
+    }
+
+    $.post("/rest/edytuj/", {
+        'username': localStorage.getItem('username'), 'password': localStorage.getItem('password'),
+        'obw_id': obw_id, 'kand_id': kand_id, 'wynik': $('#wynik').val()
+    }, function (data) {
+        $('#komunikaty').text(data.komunikat);
+    });
+}
+
 
 function widokEdycji(obw_id, kand_id) {
     wyczyscStrone();
@@ -84,10 +125,10 @@ function wyszukajGminy() {
         $.getJSON("/rest/szukaj?wzorzec=" + wzorzec, function (data) {
             $('#wyniki > header').append(data.komunikat);
 
-            for (var gmi in data.gminy) {
+            for (var i = 0 ; i < data.gminy.length ; i++) {
                 $('#lista_gmin').append(
-                    "<li><a href='#' onclick='widokGminy(" + data.gminy[gmi].id + ")'>Gmina " + data.gminy[gmi].nazwa +
-                    " (pow. " + data.gminy[gmi].powiat + ")</a></li>"
+                    "<li><a href='#' onclick='widokGminy(" + data.gminy[i].id + ")'>Gmina " + data.gminy[i].nazwa +
+                    " (pow. " + data.gminy[i].powiat + ")</a></li>"
                 );
             }
         });
@@ -96,7 +137,7 @@ function wyszukajGminy() {
 
 
 function nawigujPowrot() {
-    $('#nav_miejsce').html("<a href='#' onclick='widokKraju()'>Powrót do strony głównej</a>")
+    $('#nav_miejsce').html("<a href='#' onclick='widokKraju()'>Powrót do strony głównej</a>");
 }
 
 function wyczyscStrone() {
@@ -141,17 +182,17 @@ function wypelnijStatystyki(statystyki, wyniki) {
 
     statystykiTabelka.empty();
 
-    for (var stat in statystyki) {
+    for (var i = 0 ; i < statystyki.length ; i++) {
             statystykiTabelka.append(
-                        "<tr>"
-                            +"<td>"
-                                + statystyki[stat]
-                            + "</td>"
-                            + "<td class='statystyki_pole'>"
-                                + wyniki[statystyki[stat]]
-                            + "</td>"
-                        + "</tr>"
-            )
+                        "<tr>" +
+                            "<td>" +
+                                statystyki[i] +
+                            "</td>" +
+                            "<td class='statystyki_pole'>" +
+                                wyniki[statystyki[i]] +
+                            "</td>" +
+                        "</tr>"
+            );
         }
 }
 
@@ -162,12 +203,12 @@ function wypelnijFrekwencje(frekwencja) {
     frekwencjaDiv.empty();
 
     frekwencjaDiv.append(
-        "<header><h4>Frekwencja:</h4></header>"
-        + "<div class='tloprocentow'>"
-            + "<div class='poziomFrekwencji' style='width: " + frekwencja + "%'></div>"
-            + frekwencja + "%"
-        + "</div>"
-    )
+        "<header><h4>Frekwencja:</h4></header>" +
+        "<div class='tloprocentow'>" +
+            "<div class='poziomFrekwencji' style='width: " + frekwencja + "%'></div>" +
+            frekwencja + "%" +
+        "</div>"
+    );
 }
 
 
@@ -178,32 +219,30 @@ function wypelnijWyniki(kandydaci, wyniki, pozycje, procenty) {
       "<tr><td>Lp</td><td>Imię i nazwisko</td><td>Liczba oddanych głosów</td>" +
         "<td class='wyniki_procenty'>Wynik wyborczy (%)</td></tr>"
     );
-    i = 1;
-    for (var kand in kandydaci) {
+    for (var i = 0 ; i < kandydaci.length ; i++) {
         wynikiTabelka.append(
-            "<tr>"
-                + "<td>"
-                    + i
-                + "</td>"
-                + "<td>"
-                    + kandydaci[kand].imie
-                    + " "
-                    + kandydaci[kand].nazwisko
-                + "</td>"
-                + "<td>"
-                    + wyniki[kandydaci[kand].id]
-                + "</td>"
-                + "<td class='wyniki_procenty'>"
-                    + "<div class='tloprocentow'>"
-                        + "<div class='" + pozycje[kandydaci[kand].id]
-                        + "' style='width: " + procenty[kandydaci[kand].id] + "%'></div>"
-                    + "</div>"
-                    + procenty[kandydaci[kand].id]
-                    + "%"
-                + "</td>"
-            + "</tr>"
+            "<tr>" +
+                "<td>" +
+                    (i + 1) +
+                "</td>" +
+                "<td>" +
+                    kandydaci[i].imie +
+                    " " +
+                    kandydaci[i].nazwisko +
+                "</td>" +
+                "<td>" +
+                    wyniki[kandydaci[i].id] +
+                "</td>" +
+                "<td class='wyniki_procenty'>" +
+                    "<div class='tloprocentow'>" +
+                        "<div class='" + pozycje[kandydaci[i].id] +
+                        "' style='width: " + procenty[kandydaci[i].id] + "%'></div>" +
+                    "</div>" +
+                    procenty[kandydaci[i].id] +
+                    "%" +
+                "</td>" +
+            "</tr>"
         );
-        i++;
     }
 }
 
@@ -216,40 +255,38 @@ function wypelnijWynikiObwodu(kandydaci, wyniki, pozycje, procenty, obw_id) {
         "<td class='wyniki_procenty'>Wynik wyborczy (%)</td><td></td></tr>"
     );
     i = 1;
-    for (var kand in kandydaci) {
+    for (var i = 0 ; i < kandydaci.length ; i++) {
         wynikiTabelka.append(
-            "<tr>"
-                + "<td>"
-                    + i
-                + "</td>"
-                + "<td>"
-                    + kandydaci[kand].imie
-                    + " "
-                    + kandydaci[kand].nazwisko
-                + "</td>"
-                + "<td>"
-                    + wyniki[kandydaci[kand].id]
-                + "</td>"
-                + "<td class='wyniki_procenty'>"
-                    + "<div class='tloprocentow'>"
-                        + "<div class='" + pozycje[kandydaci[kand].id]
-                        + "' style='width: " + procenty[kandydaci[kand].id] + "%'></div>"
-                    + "</div>"
-                    + procenty[kandydaci[kand].id]
-                    + "%"
-                + "</td>"
-                + "<td>"
-                    + "<a href='#' onclick='widokEdycji(" + obw_id + ", " + kandydaci[kand].id + ")'>Edytuj</a>"
-                + "</td>"
-            + "</tr>"
+           "<tr>" +
+                "<td>" +
+                    (i + 1) +
+                "</td>" +
+                "<td>" +
+                    kandydaci[i].imie +
+                    " " +
+                    kandydaci[i].nazwisko +
+                "</td>" +
+                "<td>" +
+                    wyniki[kandydaci[i].id] +
+                "</td>" +
+                "<td class='wyniki_procenty'>" +
+                    "<div class='tloprocentow'>" +
+                        "<div class='" + pozycje[kandydaci[i].id] +
+                        "' style='width: " + procenty[kandydaci[i].id] + "%'></div>" +
+                    "</div>" +
+                    procenty[kandydaci[i].id] +
+                    "%" +
+                "</td>" +
+                "<td>" +
+                    "<a href='#' onclick='widokEdycji(" + obw_id + ", " + kandydaci[i].id + ")'>Edytuj</a>" +
+                "</td>" +
+            "</tr>"
         );
-        i++;
     }
 }
 
 function widokObwodu(obw_id) {
     widokWynikow();
-
     $.getJSON("/rest/obwod/" + obw_id, function ( data ) {
         nawigujObw(data.obwod, data.gmina, data.powiat, data.wojewodztwo);
         wypelnijStatystyki(data.statystyki, data.wyniki);
@@ -267,25 +304,25 @@ function wypelnijObwody(obwody) {
         "<header>Obwody:</header>"
     );
     linki.append("<table id='tabela_linkow'>");
-    for (var obw in obwody) {
+    for (var i = 0 ; i < obwody.length ; i++) {
         $('#tabela_linkow').append(
             "<tr>" +
                 "<td>" +
-                    "<a href='#' onclick='widokObwodu(" +obwody[obw].id + ")'> Obwód nr " + obwody[obw].numer +
+                    "<a href='#' onclick='widokObwodu(" +obwody[i].id + ")'> Obwód nr " +
+                    obwody[i].numer +
                     "</a>" +
                 "<td>" +
-                    "<a href='#' onclick='widokObwodu(" +obwody[obw].id + ")'>" + obwody[obw].adres +
+                    "<a href='#' onclick='widokObwodu(" +obwody[i].id + ")'>" + obwody[i].adres +
                     "</a>" +
                 "</td>" +
             "</tr>"
-        )
+        );
     }
 }
 
 
 function widokGminy(gmi_id) {
     widokWynikow();
-
     $.getJSON("/rest/gmina/" + gmi_id, function ( data ) {
         nawigujGmi(data.gmina, data.powiat, data.wojewodztwo);
         wypelnijStatystyki(data.statystyki, data.wyniki);
@@ -303,19 +340,19 @@ function wypelnijGminy(gminy) {
         "<header>Gminy:</header>"
     );
     linki.append("<ul id='lista_linkow'>");
-    for (var gmi in gminy) {
+    for (var i = 0 ; i < gminy.length ; i++) {
         $('#lista_linkow').append(
             "<li>" +
-            "<a href='#' onclick='widokGminy(" +gminy[gmi].id + ")'>"  + gminy[gmi].nazwa + "</a>" +
+            "<a href='#' onclick='widokGminy(" +gminy[i].id + ")'>"  + gminy[i].nazwa +
+            "</a>" +
             "</li>"
-        )
+        );
     }
 }
 
 
 function widokPowiatu(pow_id) {
     widokWynikow();
-
     $.getJSON("/rest/pow/" + pow_id, function ( data ) {
         nawigujPow(data.powiat, data.wojewodztwo);
         wypelnijStatystyki(data.statystyki, data.wyniki);
@@ -333,19 +370,19 @@ function wypelnijPowiaty(powiaty) {
         "<header>Powiaty:</header>"
     );
     linki.append("<ul id='lista_linkow'>");
-    for (var pow in powiaty) {
+    for (var i = 0 ; i < powiaty.length ; i++) {
         $('#lista_linkow').append(
             "<li>" +
-            "<a href='#' onclick='widokPowiatu(" +powiaty[pow].id + ")'>"  + powiaty[pow].nazwa + "</a>" +
+            "<a href='#' onclick='widokPowiatu(" +powiaty[i].id + ")'>"  + powiaty[i].nazwa +
+            "</a>" +
             "</li>"
-        )
+        );
     }
 }
 
 
 function widokWojewodztwa(woj_id) {
     widokWynikow();
-
     $.getJSON("/rest/woj/" + woj_id, function ( data ) {
         nawigujWoj(data.wojewodztwo);
         wypelnijStatystyki(data.statystyki, data.wyniki);
@@ -362,20 +399,16 @@ google.charts.load('current', {'packages':['geochart']});
 function narysujMape(wojewodztwa, frekwencjaWoj) {
 
         var dataArray = [];
+        var wojIndex = [];
 
         dataArray.push(['Województwo', 'Frekwencja']);
 
-        for(var woj in wojewodztwa) {
-            dataArray.push([wojewodztwa[woj].nazwa, frekwencjaWoj[wojewodztwa[woj].id]])
+        for(var i = 0 ; i < wojewodztwa.length ; i++) {
+            dataArray.push([wojewodztwa[i].nazwa, frekwencjaWoj[wojewodztwa[i].id]]);
+            wojIndex.push(wojewodztwa[i].id);
         }
 
         var data = google.visualization.arrayToDataTable(dataArray);
-
-        var wojIndex = [];
-
-        for(var woj in wojewodztwa) {
-            wojIndex.push(wojewodztwa[woj].id)
-        }
 
         var options = {
             region: 'PL',
@@ -402,12 +435,13 @@ function wypelnijWojewodztwa(wojewodztwa) {
         "<header>Województwa:</header>"
     );
     linki.append("<ul id='lista_linkow'>");
-    for (var woj in wojewodztwa) {
+    for (var i = 0 ; i < wojewodztwa.length ; i++) {
         $('#lista_linkow').append(
             "<li>" +
-            "<a href='#' onclick='widokWojewodztwa(" +wojewodztwa[woj].id + ")'>"  + wojewodztwa[woj].nazwa + "</a>" +
+            "<a href='#' onclick='widokWojewodztwa(" +wojewodztwa[i].id + ")'>"  +
+            wojewodztwa[i].nazwa + "</a>" +
             "</li>"
-        )
+        );
     }
 }
 

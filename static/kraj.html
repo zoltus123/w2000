@@ -23,18 +23,17 @@
     <!-- TODO LOGOWANIE JS -->
     <div id="nav_login">
         <div id="logowanie_przycisk" >
-            <a href="#" onclick="pokazFormularzLogowania()">Zaloguj się</a>
         </div>
         <div id="pod_logowaniem">
             <div id="div_formularz_logowania">
-                <form onsubmit="zaloguj()">
+                <form id='formularz_logowania' onsubmit="zaloguj()">
                     <label for='username'>Login:</label>
                     <input id='username' type='text' required>
                     <label for='password'>Hasło:</label>
                     <input id='password' type="password" required>
                     <input type="submit" value="Zaloguj">
                 </form>
-                <button onclick="ukryjFormularzLogowania()">Zamknij</button>
+                <img src="x.png" id='x' onclick="ukryjFormularzLogowania()">
             </div>
         </div>
     </div>
@@ -53,8 +52,25 @@
 </html>
 
 <script type="text/javascript">
-    $('#pole_wyszukiwarki').bind('input', wyszukajGminy);
-    widokKraju();
+    poprz = localStorage.getItem('poprzSesja');
+    if(!(poprz === null)) {
+        document.documentElement.innerHTML = poprz;
+    }
+    $( document ).ready( function () {
+            $('#pole_wyszukiwarki').bind('input', wyszukajGminy);
+            setInterval(function () {
+                localStorage.setItem('poprzSesja', document.documentElement.innerHTML);
+            }, 500);
+            widokKraju();
+            if(localStorage.getItem('username') === null || localStorage.getItem('password') === null) {
+                localStorage.removeItem('username');
+                localStorage.removeItem('password');
+                widokZaloguj();
+            } else {
+                uwierzytelnij(localStorage.getItem('username'), localStorage.getItem('password'));
+            }
+    });
+
 </script>
 
 
