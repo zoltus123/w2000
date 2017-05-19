@@ -53,10 +53,10 @@ def restLoginView(request):
         try:
             user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         except KeyError:
-            return JsonResponse({'komunikat' : 'zle'})
+            return JsonResponse({'komunikat' : 'źle'})
         if user is not None:
             return JsonResponse({'komunikat' : 'ok'})
-    return JsonResponse({'komunikat' : 'zle'})
+    return JsonResponse({'komunikat' : 'źle'})
 
 
 def restEdycjaDaneView(request):
