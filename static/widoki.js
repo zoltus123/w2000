@@ -84,14 +84,19 @@ function widokWyszukiwania() {
 }
 
 
-function edytujWynik(obw_id, kand_id) {
+function edytujWynik(obw_id, kand_id, ograniczenie) {
+    var wynik = $('#wynik').val();
+
     if(localStorage.getItem('username') === null || localStorage.getItem('password') === null) {
         return alert('Zaloguj się');
+    }
+    if(wynik > ograniczenie) {
+        return alert('Suma głosów oddanych nie może przekraczać liczby wydanych kart');
     }
 
     $.post("/rest/edytuj/", {
         'username': localStorage.getItem('username'), 'password': localStorage.getItem('password'),
-        'obw_id': obw_id, 'kand_id': kand_id, 'wynik': $('#wynik').val(),
+        'obw_id': obw_id, 'kand_id': kand_id, 'wynik': wynik,
         'csrfmiddlewaretoken': $.cookie('csrftoken')
     }, function (data) {
         $('#komunikaty').text(data.komunikat);
@@ -114,7 +119,8 @@ function widokEdycji(obw_id, kand_id) {
                 data.gmina.nazwa + "</a></td></tr>" +
             "<tr><td>Obwód nr:</td><td><a href='#' onclick='widokObwodu(" + data.obwod.id + ")'>" +
                 data.obwod.numer + "</a></td></tr>" +
-            "<tr><td>Wynik:</td><td><form onsubmit='edytujWynik(" + obw_id + ", " + kand_id + ")'>" +
+            "<tr><td>Wynik:</td>" +
+            "<td><form onsubmit='edytujWynik(" + obw_id + ", " + kand_id + ", " + data.ograniczenie + ")'>" +
             "<input type='number' id='wynik' min='0' required><input type='submit' value='Zapisz'></form></td></tr>" +
             "</table>"
         );

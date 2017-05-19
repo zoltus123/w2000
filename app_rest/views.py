@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from django.http import JsonResponse, Http404
 from django.shortcuts import  get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 
 from app_regiony.models import Wojewodztwo, Powiat, Gmina
 from app_wybory.models import Obwod, Kandydat

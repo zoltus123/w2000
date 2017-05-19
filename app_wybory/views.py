@@ -338,6 +338,18 @@ def logoutView(request):
     logout(request)
     return HttpResponseRedirect("/")
 
+
+def dajOgraniczenieGorneNaWynik(obw:Obwod, kand: Kandydat):
+    glosyOddane, created = WynikStatystyki.objects.get_or_create(obwod=obw, statystyka__nazwa='Głosy oddane',
+                                                                 defaults={'wynik': 0})
+    wydaneKarty, created = WynikStatystyki.objects.get_or_create(obwod=obw, statystyka__nazwa='Wydane karty',
+                                                                 defaults={'wynik': 0})
+
+    wynikKand, created = WynikKandydata.objects.get_or_create(obwod=obw, kandydat=kand, defaults={'wynik': 0})
+
+    return wynikKand.wynik + wydaneKarty.wynik - glosyOddane.wynik
+
+
 @transaction.atomic
 def edytujWynik(obw: Obwod, kand: Kandydat, wynik: int):
     #Sprawdzamy, czy wynik jest nieujemny
@@ -379,6 +391,7 @@ def dajEdycjaDane(obwod : Obwod, kandydat : Kandydat):
     data['powiat'] = {'id': obwod.gmina.powiat.id, 'nazwa': obwod.gmina.powiat.nazwa}
     data['wojewodztwo'] = {'id': obwod.gmina.powiat.wojewodztwo.id, 'nazwa': obwod.gmina.powiat.wojewodztwo.nazwa}
     data['kandydat'] = {'imie': kandydat.imie, 'nazwisko': kandydat.nazwisko}
+    data['ograniczenie'] = dajOgraniczenieGorneNaWynik(obwod, kandydat)
     return data
 
 
