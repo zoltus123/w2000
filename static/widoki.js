@@ -24,7 +24,9 @@ function widokWyloguj() {
 
 
 function uwierzytelnij(username, password) {
-    $.post("/rest/login/", {'username': username, 'password': password}, function (data) {
+    $.post("/rest/login/", {
+        'username': username, 'password': password, 'csrfmiddlewaretoken': $.cookie('csrftoken')
+    }, function (data) {
         if (data.komunikat === 'ok') {
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
@@ -89,7 +91,8 @@ function edytujWynik(obw_id, kand_id) {
 
     $.post("/rest/edytuj/", {
         'username': localStorage.getItem('username'), 'password': localStorage.getItem('password'),
-        'obw_id': obw_id, 'kand_id': kand_id, 'wynik': $('#wynik').val()
+        'obw_id': obw_id, 'kand_id': kand_id, 'wynik': $('#wynik').val(),
+        'csrfmiddlewaretoken': $.cookie('csrftoken')
     }, function (data) {
         $('#komunikaty').text(data.komunikat);
     });

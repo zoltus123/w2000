@@ -47,7 +47,7 @@ def restSzukajView(request):
     except KeyError:
         raise Http404('Brak wzorca do wyszukania')
 
-@csrf_exempt
+
 def restLoginView(request):
     if request.method == 'POST':
         try:
@@ -67,7 +67,7 @@ def restEdycjaDaneView(request):
     except KeyError:
         raise Http404('Podaj id obwodu i kandydata')
 
-@csrf_exempt
+
 def restEdytujView(request):
     if request.method == 'POST':
         try:
