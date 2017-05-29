@@ -9,7 +9,8 @@ class Wojewodztwo(models.Model):
     nazwa = models.CharField(max_length=500, unique=True)
     class Meta:
         verbose_name = "Województwo"
-        verbose_name_plural= "Województwa"
+        verbose_name_plural = "Województwa"
+        ordering = ('nazwa', )
 
     def __str__(self):
         return self.nazwa
@@ -26,7 +27,7 @@ class Powiat(models.Model):
 
 class Gmina(models.Model):
     nazwa = models.CharField(max_length=500)
-    powiat = models.ForeignKey('Powiat')
+    powiat = models.ForeignKey('Powiat', related_name='gminy')
     kod = models.PositiveIntegerField(unique=True)
     class Meta:
         verbose_name = "Gmina"
