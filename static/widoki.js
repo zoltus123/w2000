@@ -20,6 +20,7 @@ function widokZaloguj() {
 function widokWyloguj() {
     $('#logowanie_przycisk').html("<a href='#' onclick='wyloguj()'>Wyloguj się</a>");
     $('#div_formularz_logowania').hide();
+    $('#wyniki_tabelka a').show();
 }
 
 
@@ -287,7 +288,9 @@ function wypelnijWynikiObwodu(kandydaci, wyniki, pozycje, procenty, obw_id) {
                     "%" +
                 "</td>" +
                 "<td>" +
-                    "<a href='#' onclick='widokEdycji(" + obw_id + ", " + kandydaci[i].id + ")'>Edytuj</a>" +
+                    "<a style='display: " + (localStorage.getItem('username') === null ||
+                    localStorage.getItem('password') === null ? 'none' : 'block') +
+                    "' href='#' onclick='widokEdycji(" + obw_id + ", " + kandydaci[i].id + ")'>Edytuj</a>" +
                 "</td>" +
             "</tr>"
         );
