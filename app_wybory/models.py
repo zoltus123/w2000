@@ -11,6 +11,9 @@ class Okreg(models.Model):
     class Meta:
         verbose_name = "Okręg"
         verbose_name_plural="Okręgi"
+    def __str__(self):
+        return "Okręg nr " + str(self.numer)
+
 
 class Obwod(models.Model):
     numer = models.PositiveIntegerField()
@@ -21,6 +24,8 @@ class Obwod(models.Model):
     class Meta:
         verbose_name = "Obwód"
         verbose_name_plural="Obwody"
+    def __str__(self):
+        return "Obwód nr " + str(self.numer) + " " + self.adres
 
 class Kandydat(models.Model):
     imie = models.CharField(max_length=42)
@@ -29,12 +34,17 @@ class Kandydat(models.Model):
         verbose_name = "Kandydat"
         verbose_name_plural="Kandydaci"
 
+    def __str__(self):
+        return self.imie + " " + self.nazwisko
+
 class Statystyka(models.Model):
     nazwa = models.CharField(max_length=100, unique=True)
     class Meta:
         verbose_name = "Statystyka"
         verbose_name_plural="Statystyki"
 
+    def __str__(self):
+        return self.nazwa
 
 class WynikKandydata(models.Model):
     kandydat = models.ForeignKey('Kandydat')

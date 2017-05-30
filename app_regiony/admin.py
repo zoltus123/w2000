@@ -14,14 +14,13 @@ from .models import Wojewodztwo, Powiat, Gmina
 class WojAdmin(admin.ModelAdmin):
     list_display = ('nazwa', )
     search_fields = ('nazwa', )
-    inlines = []
 
 
 @admin.register(Powiat)
 class PowAdmin(admin.ModelAdmin):
     list_display = ('nazwa', 'wojewodztwo_nazwa')
     list_filter = ('wojewodztwo',)
-    search_fields = ('nazwa',)
+    search_fields = ('nazwa', 'wojewodztwo_nazwa')
 
     def wojewodztwo_nazwa(self, obj):
         return obj.wojewodztwo.nazwa
@@ -33,7 +32,7 @@ class PowAdmin(admin.ModelAdmin):
 class GmiAdmin(admin.ModelAdmin):
     list_display = ('nazwa', 'powiat_nazwa', 'wojewodztwo_nazwa', 'kod')
     list_filter = ('powiat__wojewodztwo',)
-    search_fields = ('nazwa',)
+    search_fields = ('nazwa','powiat_nazwa', 'wojewodztwo_nazwa', 'kod')
     def wojewodztwo_nazwa(self, obj):
         return obj.powiat.wojewodztwo.nazwa
     wojewodztwo_nazwa.short_description = 'Województwo'
