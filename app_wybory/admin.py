@@ -4,20 +4,20 @@ from django.contrib import admin
 # Register your models here.
 from django.core.exceptions import ValidationError
 
+from app_wybory.views import edytujWynik
 from .models import Obwod, Kandydat, Statystyka, WynikKandydata, WynikStatystyki
 
 
-class wynKandObw(admin.TabularInline):
+class WynKandInline(admin.TabularInline):
     model = WynikKandydata
     extra = 0
-    readonly_fields = ('kandydat', 'obwod')
+    readonly_fields = ('kandydat', 'obwod', 'wynik')
+    show_change_link = True
 
-
-class wynStatObw(admin.TabularInline):
+class WynStatInline(admin.TabularInline):
     model = WynikStatystyki
     extra = 0
-    readonly_fields = ('statystyka', 'obwod')
-
+    readonly_fields = ('statystyka', 'obwod', 'wynik')
 
 @admin.register(Obwod)
 class ObwAdmin(admin.ModelAdmin):
@@ -25,7 +25,7 @@ class ObwAdmin(admin.ModelAdmin):
     list_filter = ('gmina__powiat__wojewodztwo',)
     search_fields = ('numer', 'adres', 'gmina_nazwa', 'powiat_nazwa', 'wojewodztwo_nazwa')
     inlines = [
-        wynKandObw, wynStatObw
+        WynKandInline, WynStatInline
     ]
 
     def wojewodztwo_nazwa(self, obj):
@@ -52,3 +52,12 @@ class KandAdmin(admin.ModelAdmin):
 class StatAdmin(admin.ModelAdmin):
     list_display = ('nazwa', )
     search_fields = ('nazwa', )
+
+
+@admin.register(WynikKandydata)
+class WynKandAdmin(admin.ModelAdmin):
+    list_display = ('obwod', 'kandydat', 'wynik')
+    search_fields = ('obwod', 'kandydat')
+
+    def save_model(self, request, obj, form, change):
+        edytujWynik(obj.obwod, obj.kandydat, obj.wynik)

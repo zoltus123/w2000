@@ -27,6 +27,7 @@ class Obwod(models.Model):
     def __str__(self):
         return "Obwód nr " + str(self.numer) + " " + self.adres
 
+
 class Kandydat(models.Model):
     imie = models.CharField(max_length=42)
     nazwisko = models.CharField(max_length=200)
@@ -37,6 +38,7 @@ class Kandydat(models.Model):
     def __str__(self):
         return self.imie + " " + self.nazwisko
 
+
 class Statystyka(models.Model):
     nazwa = models.CharField(max_length=100, unique=True)
     class Meta:
@@ -45,6 +47,7 @@ class Statystyka(models.Model):
 
     def __str__(self):
         return self.nazwa
+
 
 class WynikKandydata(models.Model):
     kandydat = models.ForeignKey('Kandydat')
@@ -55,6 +58,9 @@ class WynikKandydata(models.Model):
         verbose_name = "Wynik kandydata w obwodzie"
         verbose_name_plural="Wyniki kandydatów w obwodach"
 
+    def __str__(self):
+        return "Wynik kandydata"
+
 class WynikStatystyki(models.Model):
     statystyka = models.ForeignKey('Statystyka')
     obwod = models.ForeignKey('Obwod')
@@ -63,3 +69,6 @@ class WynikStatystyki(models.Model):
         unique_together=('statystyka', 'obwod')
         verbose_name = "Wynik statystyki"
         verbose_name_plural="Wyniki statystyk"
+
+    def __str__(self):
+        return "Wynik statystyki"
