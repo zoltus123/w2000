@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
@@ -56,7 +56,43 @@ class WynikKandydata(models.Model):
     class Meta:
         unique_together=('kandydat', 'obwod')
         verbose_name = "Wynik kandydata w obwodzie"
-        verbose_name_plural="Wyniki kandydatów w obwodach"
+        verbose_name_plural="Wyniki"
+
+    def clean(self):
+        if(self.obwod is None or self.kandydat is None or self.wynik is None):
+            raise ValidationError("Uzupełnij dane")
+        # Sprawdzamy, czy wynik jest nieujemny
+        if (self.wynik < 0):
+            raise ValidationError("Wynik musi być nieujemny")
+        # Blokujemy obwód!
+        Obwod.objects.select_for_update().get(id=self.obwod.id)
+
+        try:
+            staryWynik = WynikKandydata.objects.get(obwod=self.obwod, kandydat=self.kandydat).wynik
+        except:
+            staryWynik = 0
+
+        roznica = self.wynik - staryWynik
+        glosyOddane, created = WynikStatystyki.objects.get_or_create(obwod=self.obwod, statystyka__nazwa='Głosy oddane',
+                                                                     defaults={'wynik': 0})
+        wydaneKarty, created = WynikStatystyki.objects.get_or_create(obwod=self.obwod, statystyka__nazwa='Wydane karty',
+                                                                     defaults={'wynik': 0})
+
+        if glosyOddane.wynik + roznica > wydaneKarty.wynik:
+            raise ValidationError("Suma głosów oddanych nie może przekraczać liczby wydanych kart")
+
+        glosyWazne, created = WynikStatystyki.objects.get_or_create(obwod=self.obwod, statystyka__nazwa='Głosy ważne',
+                                                                    defaults={
+                                                                        'wynik': 0
+                                                                    })
+
+        glosyWazne.wynik += roznica
+        glosyWazne.save()
+
+        glosyOddane.wynik += roznica
+        glosyOddane.save()
+
+        return ("Zapisano liczbę głosów: " + str(self.wynik))
 
     def __str__(self):
         return "Wynik kandydata"

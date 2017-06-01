@@ -20,7 +20,7 @@ class WojAdmin(admin.ModelAdmin):
 class PowAdmin(admin.ModelAdmin):
     list_display = ('nazwa', 'wojewodztwo_nazwa')
     list_filter = ('wojewodztwo',)
-    search_fields = ('nazwa', 'wojewodztwo_nazwa')
+    search_fields = ('nazwa', 'wojewodztwo__nazwa')
 
     def wojewodztwo_nazwa(self, obj):
         return obj.wojewodztwo.nazwa
@@ -32,7 +32,7 @@ class PowAdmin(admin.ModelAdmin):
 class GmiAdmin(admin.ModelAdmin):
     list_display = ('nazwa', 'powiat_nazwa', 'wojewodztwo_nazwa', 'kod')
     list_filter = ('powiat__wojewodztwo',)
-    search_fields = ('nazwa','powiat_nazwa', 'wojewodztwo_nazwa', 'kod')
+    search_fields = ('nazwa','powiat__nazwa', 'powiat__wojewodztwo__nazwa', 'kod')
     def wojewodztwo_nazwa(self, obj):
         return obj.powiat.wojewodztwo.nazwa
     wojewodztwo_nazwa.short_description = 'Województwo'

@@ -7,7 +7,6 @@ from django.core.exceptions import ValidationError
 from app_wybory.views import edytujWynik
 from .models import Obwod, Kandydat, Statystyka, WynikKandydata, WynikStatystyki
 
-
 class WynKandInline(admin.TabularInline):
     model = WynikKandydata
     extra = 0
@@ -23,7 +22,7 @@ class WynStatInline(admin.TabularInline):
 class ObwAdmin(admin.ModelAdmin):
     list_display = ('numer', 'adres', 'gmina_nazwa', 'powiat_nazwa', 'wojewodztwo_nazwa')
     list_filter = ('gmina__powiat__wojewodztwo',)
-    search_fields = ('numer', 'adres', 'gmina_nazwa', 'powiat_nazwa', 'wojewodztwo_nazwa')
+    search_fields = ('numer', 'adres', 'gmina__nazwa', 'gmina__powiat__nazwa', 'gmina__powiat__wojewodztwo__nazwa')
     inlines = [
         WynKandInline, WynStatInline
     ]
@@ -57,7 +56,5 @@ class StatAdmin(admin.ModelAdmin):
 @admin.register(WynikKandydata)
 class WynKandAdmin(admin.ModelAdmin):
     list_display = ('obwod', 'kandydat', 'wynik')
-    search_fields = ('obwod', 'kandydat')
+    search_fields = ('obwod__numer','obwod__adres', 'kandydat__imie', 'kandydat__nazwisko')
 
-    def save_model(self, request, obj, form, change):
-        edytujWynik(obj.obwod, obj.kandydat, obj.wynik)
