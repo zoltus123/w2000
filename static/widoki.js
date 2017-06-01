@@ -29,6 +29,7 @@ function uwierzytelnij(username, password) {
         'username': username, 'password': password, 'csrfmiddlewaretoken': $.cookie('csrftoken')
     }, function (data) {
         if (data.komunikat === 'ok') {
+            $('#komunikaty').text('Pomyślnie zalogowano');
             localStorage.setItem('username', username);
             localStorage.setItem('password', password);
             widokWyloguj();
@@ -43,11 +44,13 @@ function uwierzytelnij(username, password) {
 function zaloguj() {
     var username = $('#username').val();
     if(!username || username.length === 0) {
-        return alert("Podaj login!");
+        $('#komunikaty').text("Podaj login!");
+        return;
     }
     var password = $('#password').val();
     if(!password || password.length === 0) {
-        return alert("Podaj hasło!");
+        $('#komunikaty').text("Podaj hasło!");
+        return;
     }
 
     document.getElementById('formularz_logowania').reset();
@@ -89,10 +92,12 @@ function edytujWynik(obw_id, kand_id, ograniczenie) {
     var wynik = $('#wynik').val();
 
     if(localStorage.getItem('username') === null || localStorage.getItem('password') === null) {
-        return alert('Zaloguj się');
+        $('#komunikaty').text('Zaloguj się');
+        return;
     }
     if(wynik > ograniczenie) {
-        return alert('Suma głosów oddanych nie może przekraczać liczby wydanych kart');
+        $('#komunikaty').text('Suma głosów oddanych nie może przekraczać liczby wydanych kart');
+        return;
     }
 
     $.post("/rest/edytuj/", {
