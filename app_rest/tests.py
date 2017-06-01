@@ -18,39 +18,47 @@ from app_wybory.models import Okreg, Obwod, Statystyka, Kandydat, WynikKandydata
 def getDriver():
     driver = webdriver.Chrome()
     driver.get('localhost:8000/static/kraj.html')
-    driver.implicitly_wait(3)
+    driver.implicitly_wait(2)
     return driver
+
 
 def wyloguj(driver: webdriver.Chrome):
     try:
-        driver.find_element_by_link_text('Wyloguj się')
+        driver.find_element_by_link_text('Wyloguj się').click()
     except NoSuchElementException:
         pass
 
 
-
 def zaloguj(driver : webdriver.Chrome, login, haslo):
     wyloguj(driver)
-    driver.find_element_by_link_text('Zaloguj się').click()
-    driver.find_element_by_id('username').send_keys(login)
-    driver.find_element_by_id('password').send_keys(haslo)
-    driver.find_element_by_id('zaloguj').click()
+    przycisk = driver.find_element_by_link_text('Zaloguj się')
+    przycisk.click()
 
-    time.sleep(3)
-    print(driver.find_element_by_id('komunikaty').text)
+    poleLoginu = driver.find_element_by_id('username')
+    poleLoginu.clear()
+    poleLoginu.send_keys(login)
 
-    time.sleep(3)
+    poleHasla = driver.find_element_by_id('password')
+    poleHasla.clear()
+    poleHasla.send_keys(haslo)
 
-    if(driver.find_element_by_id('komunikaty').text == 'Pomyślnie zalogowano'):
+    time.sleep(5)
+
+    wyslij = driver.find_element_by_id('wyslij')
+    wyslij.click()
+
+    time.sleep(5)
+
+    komunikat = driver.find_element_by_id('komunikaty').text
+
+    if(komunikat == 'Pomyślnie zalogowano'):
         return True
     return False
 
 class UzytkownikTestCase(TestCase):
-    def test_logowania(self):
+    def test_poprawnego_logowania(self):
         print("Test logowania w przeglądarce")
         driver = getDriver()
-
-        assert zaloguj(driver, 'a', 'a') == False
         assert zaloguj(driver, 'miki', 'miki2017') == True
 
     def test_edycji(self):
