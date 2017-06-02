@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from django.http import JsonResponse, Http404
 from django.shortcuts import  get_object_or_404
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 
 from app_regiony.models import Wojewodztwo, Powiat, Gmina
 from app_wybory.models import Obwod, Kandydat
@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
+@ensure_csrf_cookie
 def restIndexView(request):
     return JsonResponse(podajDaneKraju(), safe=False)
 

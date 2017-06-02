@@ -127,7 +127,8 @@ function widokEdycji(obw_id, kand_id) {
                 data.obwod.numer + "</a></td></tr>" +
             "<tr><td>Wynik:</td>" +
             "<td><form onsubmit='edytujWynik(" + obw_id + ", " + kand_id + ", " + data.ograniczenie + ")'>" +
-            "<input type='number' id='wynik' min='0' required><input type='submit' value='Zapisz'></form></td></tr>" +
+            "<input type='number' id='wynik' min='0' required><input id='zapisz' type='submit' value='Zapisz'>" +
+        "</form></td></tr>" +
             "</table>"
         );
     });
